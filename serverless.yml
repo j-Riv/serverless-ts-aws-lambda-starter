@@ -1,0 +1,63 @@
+configValidationMode: error
+
+service: awsLambdaStarter
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-west-1
+  #stackName: custom-stack-name # Use a custom name for the CloudFormation stack
+  #apiName: custom-api-name # Use a custom name for the API Gateway API
+  memorySize: 128 # Overwrite the default memory size. Default is 1024
+  timeout: 6 # The default is 6 seconds. Note: API Gateway current maximum is 30 seconds
+  logRetentionInDays: 14 # Set the default RetentionInDays for a CloudWatch LogGroup
+  environment:
+    secretKey: ${env:SECRET_KEY}
+
+# functions
+functions:
+  helloFriend:
+    handler: src/functions/helloFriend.handler
+    events: # The events that trigger this function
+      - http:
+          path: awsLambdaStarter
+          method: any
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - X-Custom-Header
+
+# Serverless plugins
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+    GatewayResponseDefault5XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
