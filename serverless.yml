@@ -2,6 +2,9 @@ configValidationMode: error
 
 service: awsLambdaStarter
 
+build:
+  esbuild: false
+
 useDotenv: true
 
 provider:
