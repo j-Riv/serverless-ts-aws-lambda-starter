@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "sls offline -s dev",
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "lint": "eslint src/**/*.ts",
+    "format": "eslint src/**/*.ts --fix"
   },
   "author": "j-Riv <jose.alfredo.rivera@gmail.com>",
   "license": "ISC",
